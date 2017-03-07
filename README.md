@@ -1,3 +1,5 @@
+# iOS 沿曲线线性渐变的贝塞尔曲线
+
 iOS原生的渐变只支持线性的渐变，但有的时候我们需要沿曲线进行渐变。
 先看下垂直线性渐变与沿曲线线性渐变的区别
 ![垂直线性渐变：颜色最亮的地方在曲线的最低点](http://upload-images.jianshu.io/upload_images/1681985-f5bea9e1d9f408f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500)
