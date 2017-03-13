@@ -24,10 +24,11 @@
 
 @implementation GradientBezierLine
 
-- (void)drawGradientBezierLineWithStrtPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint controlPoint:(CGPoint)controlPoint {
+- (void)drawGradientBezierLineWithStrtPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint controlPoint:(CGPoint)controlPoint
+								 startColor:(UIColor *)startColor endColor:(UIColor *)endColor{
     BezierPath *creatPath = [[BezierPath alloc] initWithStartPoint:startPoint endPoint:endPoint controlPoint:controlPoint];
-    creatPath.startColor = [UIColor colorWithRed:0 green:0 blue:1 alpha:1];
-    creatPath.endColor = [UIColor colorWithRed:1 green:1 blue:0 alpha:1];
+    creatPath.startColor =  startColor;
+    creatPath.endColor = endColor;
     
     NSArray *pointsArray = [[creatPath bezierPointsWithCount:(NSInteger)creatPath.legnth] mutableCopy];
     

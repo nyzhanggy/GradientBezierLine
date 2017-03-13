@@ -7,5 +7,6 @@
 
 @interface GradientBezierLine : UIImageView
 
-- (void)drawGradientBezierLineWithStrtPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint controlPoint:(CGPoint)controlPoint;
+- (void)drawGradientBezierLineWithStrtPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint controlPoint:(CGPoint)controlPoint
+								 startColor:(UIColor *)startColor endColor:(UIColor *)endColor;
 @end

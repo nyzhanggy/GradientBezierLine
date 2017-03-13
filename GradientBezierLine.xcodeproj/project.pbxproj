@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		154EFE7B1E76A68D00405ECF /* GradientLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 154EFE7A1E76A68D00405ECF /* GradientLine.m */; };
 		1554D0001E10CE8D000FC274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1554CFFF1E10CE8D000FC274 /* main.m */; };
 		1554D0031E10CE8D000FC274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1554D0021E10CE8D000FC274 /* AppDelegate.m */; };
 		1554D0061E10CE8D000FC274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1554D0051E10CE8D000FC274 /* ViewController.m */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		154EFE791E76A68D00405ECF /* GradientLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientLine.h; sourceTree = "<group>"; };
+		154EFE7A1E76A68D00405ECF /* GradientLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradientLine.m; sourceTree = "<group>"; };
 		1554CFFB1E10CE8D000FC274 /* GradientBezierLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GradientBezierLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1554CFFF1E10CE8D000FC274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1554D0011E10CE8D000FC274 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -45,6 +48,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		154EFE781E76A67E00405ECF /* dev */ = {
+			isa = PBXGroup;
+			children = (
+				154EFE791E76A68D00405ECF /* GradientLine.h */,
+				154EFE7A1E76A68D00405ECF /* GradientLine.m */,
+			);
+			name = dev;
+			sourceTree = "<group>";
+		};
 		1554CFF21E10CE8D000FC274 = {
 			isa = PBXGroup;
 			children = (
@@ -64,6 +76,7 @@
 		1554CFFD1E10CE8D000FC274 /* GradientBezierLine */ = {
 			isa = PBXGroup;
 			children = (
+				154EFE781E76A67E00405ECF /* dev */,
 				1554D0011E10CE8D000FC274 /* AppDelegate.h */,
 				1554D0021E10CE8D000FC274 /* AppDelegate.m */,
 				1554D0041E10CE8D000FC274 /* ViewController.h */,
@@ -163,6 +176,7 @@
 				1554D0061E10CE8D000FC274 /* ViewController.m in Sources */,
 				1554D0191E10CEEA000FC274 /* BezierPath.m in Sources */,
 				1554D0031E10CE8D000FC274 /* AppDelegate.m in Sources */,
+				154EFE7B1E76A68D00405ECF /* GradientLine.m in Sources */,
 				1554D0001E10CE8D000FC274 /* main.m in Sources */,
 				1554D01A1E10CEEA000FC274 /* GradientBezierLine.m in Sources */,
 			);
@@ -321,6 +335,7 @@
 				1554D0141E10CE8D000FC274 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
