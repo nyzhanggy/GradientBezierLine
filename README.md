@@ -137,3 +137,132 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
 ![最终效果](http://upload-images.jianshu.io/upload_images/1681985-926b826a1ad02d08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/520)
 
 
+---
+
+### 改进方案
+
+对于渐变曲线的画法，经过一些的思量之后，想到了了另外一种思路。[以前的思路是](http://www.jianshu.com/p/15db1cb69bc5)，通过t值来获取点，为了保证点的个数足够的多，所以就大致取了一个可以覆盖整条曲线的点数，但是这样盲目的去点会存在点数过多和去点重复的问题。同时这样也不支持线宽的设置。所以就有了另外一只思路来实现渐变曲线。
+
+这种方式的大致思路是，先获取到贝塞尔曲线上所有的点，然后在计算每个点的t值，然后根据t值来计算每个点的颜色。
+
+#### 1、获取贝塞尔曲线上所有的点
+如何获取贝塞尔曲线上所有的点？这个其实是比较简单的，可以利用`UIBezierPath`画一条曲线，渲染到`CAShapeLayer (fillColor:clearColor,strokeColor:redColor)`上，然后遍历`CAShapeLayer`上的像素，只要像素的有色值那就是需要的点。同时由于这样渲染出的线条已经处理好了锯齿问题（即像素透明度）, 所以为后面的处理省下了很多的事情。
+
+#### 2、计算每个点的 t 值
+现在已经得到了需要的点，剩下的就是计算每个点的t值了。计算t值也就是一个解方程的过程，这里说的是二次贝塞尔曲线，涉及到的就是一元二次方程。但是在像素点的坐标值都是整数型的，不是所有的点都是在曲线上的，所以解出来的 t 值多少会有些误差，不过效果还是可以的，对整体的渐变影响不大。
+
+```
+// 根据 x 计算 t
+- (float)baseOnXWithPoint:(CGPoint)point {
+    float a = _startPoint.x - 2 * _controlPoint.x + _endPoint.x;
+    float b = 2 * _controlPoint.x - 2 * _startPoint.x;
+    float c = _startPoint.x - point.x;
+    float condition = pow(b, 2) - 4 * a * c;
+    if (a != 0 ) {
+        if (condition >= 0) {
+            NSArray *r = [self quadraticEquationWithA:a b:b c:c];
+            if (r && r.count > 0) {
+                float t = [self betterRWithRs:r targetPoint:point];
+                return t;
+            }
+        }
+    } else {
+        // 一元一次方程求解
+        float t = (-c)/b;
+        return t;
+    }
+    return -1;
+}
+
+// 根据 y 计算 t
+- (float)baseOnYWithPoint:(CGPoint)point {
+    float a = _startPoint.y - 2 * _controlPoint.y + _endPoint.y;
+    float b = 2 * _controlPoint.y - 2 * _startPoint.y;
+    float c = _startPoint.y - point.y;
+    float condition = pow(b, 2) - 4 * a * c;
+    if ( a != 0) {
+        if (condition >= 0) {
+            NSArray *r = [self quadraticEquationWithA:a b:b c:c];
+            if (r && r.count > 0) {
+                float t = [self betterRWithRs:r targetPoint:point];
+                return t;
+            }
+        }
+    } else {
+        // 一元一次方程求解
+        float t = (-c)/b;
+        return t;
+    }
+    
+    return -1;
+}
+```
+
+这里会有两个方程，一个是以x为参数，一个以y为参数。这两个方程都会用到。为什么要用两个方程？因为有的点通过x或者y 并不能解得结果，比如说顶点附近的点，通过点做 x 轴的 垂线，可能与曲线并不会交点，也就意味着不会有解。所以如果以x为参数无解，那就再用y为参数的方程解一次，如果还没有解，那这个点就认为是不在线上的了。
+
+在计算的过程中还有一个问题：如果以x 为参数计算，那么 X 方向上顶点附近的点（如果有顶点）计算出来的t值误差会比较大。所以在计算的时候做了一些判断，如果是顶点附近的点，以y为参数计算
+```
+- (float)quadraticEquationWithPoint:(CGPoint)point  {
+    float t = [self baseOnXWithPoint:point];
+    // 如果没有结果 即 t = -1，则依据Y从新计算
+    // 如果计算的结果为 X 方向上的顶点，由于顶点位置计算不准确，所以根据Y从新计算
+    if (t == -1 || fabs([self tForXAtVertexPoint] - t) < 0.1) {
+        float otherT = [self baseOnYWithPoint:point];
+        if (otherT == -1) {
+            return t;
+        }
+        t = otherT;
+    }
+    return t;
+}
+```
+
+
+对于一元二次方程，是会有两个根的情况的，所以对于解出来的结果需要进行比对，找到与目标点最接近的t值
+
+```
+// 筛选结果
+- (float)betterRWithRs:(NSArray *)rs targetPoint:(CGPoint)point{
+    CGFloat distance = NSNotFound;
+    NSInteger betterIndex = 0;
+    for (NSInteger i = 0; i < rs.count; i ++) {
+        float t = [[rs objectAtIndex:i] floatValue];
+        CGFloat x = [self xAtT:t];
+        CGFloat y = [self yAtT:t];
+        if (distance == NSNotFound) {
+            distance = [self distanceWithPoint:CGPointMake(x, y) point1:point];
+            betterIndex = i;
+
+        } else {
+            if (distance > [self distanceWithPoint:CGPointMake(x, y) point1:point]) {
+                distance = [self distanceWithPoint:CGPointMake(x, y) point1:point];
+                betterIndex = i;
+            }
+        }
+        
+    }
+    float t = [rs[betterIndex] floatValue];
+    if (t >= 1) {
+        if ([self isNearbyTargetPoint:_endPoint x:point.x y:point.y]) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    
+    if (t <= 0) {
+        if ([self isNearbyTargetPoint:_startPoint x:point.x y:point.y]) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return [rs[betterIndex] floatValue];
+}
+```
+
+可以先看下效果。整体来说效果还是理想的，并且也支持了线宽的问题。
+
+![渐变曲线](http://upload-images.jianshu.io/upload_images/1681985-a936b1c1775106e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/520)
+
+
