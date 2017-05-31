@@ -6,258 +6,346 @@
 #import "GradientLine.h"
 
 @interface GradientLine () {
-
-	CGPoint _startPoint;
-	CGPoint _controlPoint;
-	CGPoint _endPoint;
-	
-	float _quadraticEquationA;
-	float _quadraticEquationB;
+    
+    CGPoint _startPoint;
+    CGPoint _controlPoint;
+    CGPoint _endPoint;
+    
+    float _quadraticEquationA;
+    float _quadraticEquationB;
+    
+    CGFloat _lineWidth;
+    CGPoint _vertexPoint;
 }
 
 @end
 
 @implementation GradientLine
 - (UIImage*)gradientLineWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint
-							startColor:(UIColor *)startColor endColor:(UIColor *)endColor{
-
-	_startPoint = startPoint;
-	_controlPoint = controlPoint;
-	_endPoint = endPoint;
-	
-	CGFloat startR;
-	CGFloat startG;
-	CGFloat startB;
-	CGFloat startA;
-	[startColor getRed:&startR green:&startG blue:&startB alpha:&startA];
-	
-	CGFloat endR;
-	CGFloat endG;
-	CGFloat endB;
-	CGFloat endA;
-	[endColor getRed:&endR green:&endG blue:&endB alpha:&endA];
-	
-	
-	CAShapeLayer *layer = [self lineLayerWithStartPoint:startPoint controlPoint:controlPoint endPoint:endPoint];
-	
-	float scale = [UIScreen mainScreen].scale;
-	// 分配内存
-	const int imageWidth = layer.bounds.size.width * scale;
-	const int imageHeight = layer.bounds.size.height * scale;
-	size_t    bytesPerRow = imageWidth * 4;
-	uint32_t* rgbImageBuf = (uint32_t*)calloc(imageWidth * imageHeight, sizeof(UInt32));
-	
-	// 创建context
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	CGContextRef context = CGBitmapContextCreate(rgbImageBuf, imageWidth, imageHeight, 8, bytesPerRow, colorSpace,kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-	CGContextTranslateCTM(context,0,imageHeight);
-	CGContextScaleCTM(context, 1, -1);
-	CGContextScaleCTM(context, scale,scale);
-	
-
-	[layer renderInContext:context];
-
-	
-	// 遍历像素
-	int pixelNum = imageWidth * imageHeight;
-	uint32_t* pCurPtr = rgbImageBuf;
-	
-	for (int i = 0; i < pixelNum; i++, pCurPtr++) {
-		int x = i%imageWidth;
-		int y = i/imageWidth;
-		if (*pCurPtr !=  0xFFFFFFFF && *pCurPtr != 0x00000000) {
-			uint8_t* ptr = (uint8_t*)pCurPtr;
-			float t = [self tAtPoint:CGPointMake(x/scale, y/scale)];
-			if (t == -1) {
-				ptr[0] = 0;
-				ptr[1] = 0 ;
-				ptr[2] = 0 ;
-				ptr[3] = 0 ;
-			} else {
-//				NSLog(@"x: %d y:%d  %f",x,y,t);
-				float v = (ptr[3]*1.0)/255.0;
-				CGFloat r = (endR - startR) * t + startR;
-				CGFloat g = (endG - startG) * t + startG;
-				CGFloat b = (endB - startB) * t + startB;
-				CGFloat a = (endA - startA) * t + startA;
-				
-				ptr[0] = a * 255 * v;
-				ptr[1] = b * 255 ;
-				ptr[2] = g * 255 ;
-				ptr[3] = r * 255 ;
-			}
-		}
-	}
-	
-	// 将内存转成image
-	CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, rgbImageBuf, bytesPerRow * imageHeight,ProviderReleaseData);
-	CGImageRef imageRef = CGImageCreate(imageWidth, imageHeight, 8, 32, bytesPerRow, colorSpace,kCGImageAlphaLast | kCGBitmapByteOrder32Little, dataProvider,NULL, true, kCGRenderingIntentDefault);
-	
-	CGDataProviderRelease(dataProvider);
-	
-	UIImage* resultUIImage = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
-	
-	// 释放
-	CGImageRelease(imageRef);
-	CGContextRelease(context);
-	CGColorSpaceRelease(colorSpace);
-	
-	// free(rgbImageBuf) 创建dataProvider时已提供释放函数，这里不用free
-	return resultUIImage;
-	
+                            startColor:(UIColor *)startColor endColor:(UIColor *)endColor
+                                  size:(CGSize)size {
+    
+    _startPoint = startPoint;
+    _controlPoint = controlPoint;
+    _endPoint = endPoint;
+    _lineWidth = 5;
+    
+    CGFloat startR;
+    CGFloat startG;
+    CGFloat startB;
+    CGFloat startA;
+    [startColor getRed:&startR green:&startG blue:&startB alpha:&startA];
+    
+    CGFloat endR;
+    CGFloat endG;
+    CGFloat endB;
+    CGFloat endA;
+    [endColor getRed:&endR green:&endG blue:&endB alpha:&endA];
+    
+    
+    CAShapeLayer *layer = [self lineLayerWithStartPoint:startPoint controlPoint:controlPoint endPoint:endPoint size:size];
+    
+    float scale = [UIScreen mainScreen].scale;
+    // 分配内存
+    const int imageWidth = layer.bounds.size.width * scale;
+    const int imageHeight = layer.bounds.size.height * scale;
+    size_t    bytesPerRow = imageWidth * 4;
+    uint32_t* rgbImageBuf = (uint32_t*)calloc(imageWidth * imageHeight, sizeof(UInt32));
+    
+    // 创建context
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(rgbImageBuf, imageWidth, imageHeight, 8, bytesPerRow, colorSpace,kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGContextTranslateCTM(context,0,imageHeight);
+    CGContextScaleCTM(context, 1, -1);
+    CGContextScaleCTM(context, scale,scale);
+    
+    
+    [layer renderInContext:context];
+    
+    
+    // 遍历像素
+    int pixelNum = imageWidth * imageHeight;
+    uint32_t* pCurPtr = rgbImageBuf;
+    
+    for (int i = 0; i < pixelNum; i++, pCurPtr++) {
+        int x = i%imageWidth;
+        int y = i/imageWidth;
+        if (*pCurPtr !=  0xFFFFFFFF && *pCurPtr != 0x00000000) {
+            uint8_t* ptr = (uint8_t*)pCurPtr;
+            float t = [self tAtPoint:CGPointMake(x/scale, y/scale)];
+            if (t == -1) {
+                ptr[0] = 0;
+                ptr[1] = 0 ;
+                ptr[2] = 0 ;
+                ptr[3] = 0 ;
+            } else {
+                float v = (ptr[3]*1.0)/255.0;
+                CGFloat r = (endR - startR) * t + startR;
+                CGFloat g = (endG - startG) * t + startG;
+                CGFloat b = (endB - startB) * t + startB;
+                CGFloat a = (endA - startA) * t + startA;
+                
+                ptr[0] = a * 255 * v;
+                ptr[1] = b * 255 ;
+                ptr[2] = g * 255 ;
+                ptr[3] = r * 255 ;
+            }
+        }
+    }
+    
+    // 将内存转成image
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, rgbImageBuf, bytesPerRow * imageHeight,ProviderReleaseData);
+    CGImageRef imageRef = CGImageCreate(imageWidth, imageHeight, 8, 32, bytesPerRow, colorSpace,kCGImageAlphaLast | kCGBitmapByteOrder32Little, dataProvider,NULL, true, kCGRenderingIntentDefault);
+    
+    CGDataProviderRelease(dataProvider);
+    
+    UIImage* resultUIImage = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    
+    // 释放
+    CGImageRelease(imageRef);
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    
+    // free(rgbImageBuf) 创建dataProvider时已提供释放函数，这里不用free
+    return resultUIImage;
+    
 }
 
 void ProviderReleaseData (void *info, const void *data, size_t size)
 {
-	free((void*)data);
+    free((void*)data);
 }
 
-- (CAShapeLayer *)lineLayerWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint {
-	UIBezierPath *path = [UIBezierPath bezierPath];
-	[path moveToPoint:startPoint];
-	[path addQuadCurveToPoint:endPoint controlPoint:controlPoint];
-	CGFloat maxX = MAX(startPoint.x, MAX(controlPoint.x, endPoint.x));
-	CGFloat maxY = MAX(startPoint.y, MAX(controlPoint.y, endPoint.y));
-	
-
-	CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-	layer.bounds = CGRectMake(0, 0, maxX + 10, maxY + 10);
-	layer.path = path.CGPath;
-	layer.lineWidth = 1;
-	layer.strokeColor = [UIColor redColor].CGColor;
-	layer.fillColor = [UIColor clearColor].CGColor;
-
-	return layer;
+- (CAShapeLayer *)lineLayerWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint size:(CGSize)size{
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:startPoint];
+    [path addQuadCurveToPoint:endPoint controlPoint:controlPoint];
+    
+    CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+    layer.bounds = CGRectMake(0, 0, size.width, size.height);
+    layer.path = path.CGPath;
+    layer.lineWidth = _lineWidth;
+    layer.strokeColor = [UIColor redColor].CGColor;
+    layer.fillColor = [UIColor clearColor].CGColor;
+    
+    return layer;
 }
 
 #pragma mark - 计算 t 值
-
-- (float)conditionWithY:(float)y {
-	
-	float c = _startPoint.y - y;
-	return  powf(_quadraticEquationB, 2) - 4 * _quadraticEquationA * c;
-}
 - (float)tAtPoint:(CGPoint)point {
-	_quadraticEquationA = _startPoint.y - 2 * _controlPoint.y + _endPoint.y;
-	_quadraticEquationB = 2 * _controlPoint.y - 2 * _startPoint.y;
-	
-	if (_quadraticEquationA != 0) {
-		return [self quadraticEquationWithPoint:point];
-	} else {
-		return [self linearEquationWith:point.y];
-	}
+    return [self quadraticEquationWithPoint:point];
 }
 
 #pragma mark - 解方程
 #pragma mark ---一元二次方程
-- (float)quadraticEquationWithPoint:(CGPoint)point {
-	float x = point.x;
-	float y = point.y;
-	
-	float condition = [self conditionWithY:y];
-	if (condition < 0) { // 没有t值
-		// x 不变 y偏移
-		for (int offsetY = -2; offsetY <= 2; offsetY ++) {
-			y = point.y + offsetY;
-			condition = [self conditionWithY:y];
-			if (condition > 0) {
-				break;
-			}
-			if (offsetY == 2) {
-				return -1;
-			}
-		}
-	}
-	float t1 ;
-	float t2 ;
-	
-	[self calTWithCondition:condition resultT1:&t1 resultT2:&t2];
-	float t = [self betterTWithT1:t1 t2:t2 targetX:x];
-	
-	
-	if (t >= 0 && t <= 1) {
-		return t;
-	} else { // t 值不在 [0,1]之间
-		// 偏移 y
-		float offsetYResultT = -1;
-		int offsetY ;
-		
-		for (offsetY = -2; offsetY <= 2 ; offsetY ++ ) {
-			int newY = y + offsetY;
-			condition = [self conditionWithY:newY];
-			
-			if (condition > 0) {
-				[self calTWithCondition:condition resultT1:&t1 resultT2:&t2];
-				offsetYResultT = [self betterTWithT1:t1 t2:t2 targetX:x];
-				
-				if (offsetYResultT <= 0) {
-					if ([self isNearbyTargetPoint:_startPoint x:x y:newY]) { // 起点附近
-						return 0;
-					}
-				} else if (offsetYResultT >= 1) {
-					if ([self isNearbyTargetPoint:_endPoint x:x y:newY]) { // 终点附近
-						return 1;
-					}
-				} else {
-					break;
-				}
-			}
-		}
-		
-		// 偏移 x
-		float offsetXResultT = -1;
-		for (int offsetX = -2; offsetX <= 2; offsetX ++) {
-			int newX = x + offsetX;
-			[self calTWithCondition:condition  resultT1:&t1 resultT2:&t2];
-			offsetXResultT = [self betterTWithT1:t1 t2:t2  targetX:x];
-			if (t <= 0) {
-				if ([self isNearbyTargetPoint:_startPoint x:newX y:y]) {
-					return 0;
-				}
-			} else if (t >= 1) {
-				if ([self isNearbyTargetPoint:_endPoint x:newX y:y]) {
-					return 1;
-				}
-			} else {
-				if (abs(offsetY) < abs(offsetY)) {
-					return offsetYResultT;
-				}
-				return offsetXResultT;
-			}
-		}
-	}
-
-	return -1;
+- (float)quadraticEquationWithPoint:(CGPoint)point  {
+    float t = [self baseOnXWithPoint:point];
+    // 如果没有结果 即 t = -1，则依据Y从新计算
+    // 如果计算的结果为 X 方向上的顶点，由于顶点位置计算不准确，所以根据Y从新计算
+    if (t == -1 || fabs([self tForXAtVertexPoint] - t) < 0.1) {
+        float otherT = [self baseOnYWithPoint:point];
+        if (otherT == -1) {
+            return t;
+        }
+        t = otherT;
+    }
+    return t;
+}
+// 根据 x 计算 t
+- (float)baseOnXWithPoint:(CGPoint)point {
+    float a = _startPoint.x - 2 * _controlPoint.x + _endPoint.x;
+    float b = 2 * _controlPoint.x - 2 * _startPoint.x;
+    float c = _startPoint.x - point.x;
+    float condition = pow(b, 2) - 4 * a * c;
+    if (a != 0 ) {
+        if (condition >= 0) {
+            NSArray *r = [self quadraticEquationWithA:a b:b c:c];
+            if (r && r.count > 0) {
+                float t = [self betterRWithRs:r targetPoint:point];
+                return t;
+            }
+        }
+    } else {
+        // 一元一次方程求解
+        float t = (-c)/b;
+        return t;
+    }
+    return -1;
 }
 
+// 根据 y 计算 t
+- (float)baseOnYWithPoint:(CGPoint)point {
+    float a = _startPoint.y - 2 * _controlPoint.y + _endPoint.y;
+    float b = 2 * _controlPoint.y - 2 * _startPoint.y;
+    float c = _startPoint.y - point.y;
+    float condition = pow(b, 2) - 4 * a * c;
+    if ( a != 0) {
+        if (condition >= 0) {
+            NSArray *r = [self quadraticEquationWithA:a b:b c:c];
+            if (r && r.count > 0) {
+                float t = [self betterRWithRs:r targetPoint:point];
+                return t;
+            }
+        }
+    } else {
+        // 一元一次方程求解
+        float t = (-c)/b;
+        return t;
+    }
+    
+    return -1;
+}
+// 筛选结果
+- (float)betterRWithRs:(NSArray *)rs targetPoint:(CGPoint)point{
+    CGFloat distance = NSNotFound;
+    NSInteger betterIndex = 0;
+    for (NSInteger i = 0; i < rs.count; i ++) {
+        float t = [[rs objectAtIndex:i] floatValue];
+        CGFloat x = [self xAtT:t];
+        CGFloat y = [self yAtT:t];
+        if (distance == NSNotFound) {
+            distance = [self distanceWithPoint:CGPointMake(x, y) point1:point];
+            betterIndex = i;
+            
+        } else {
+            if (distance > [self distanceWithPoint:CGPointMake(x, y) point1:point]) {
+                distance = [self distanceWithPoint:CGPointMake(x, y) point1:point];
+                betterIndex = i;
+            }
+        }
+        
+    }
+    float t = [rs[betterIndex] floatValue];
+    if (t >= 1) {
+        if ([self isNearbyTargetPoint:_endPoint x:point.x y:point.y]) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    
+    if (t <= 0) {
+        if ([self isNearbyTargetPoint:_startPoint x:point.x y:point.y]) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return [rs[betterIndex] floatValue];
+}
+
+// 一元二次方程的求根公式
+- (NSArray *)quadraticEquationWithA:(float)a b:(float)b c:(float)c {
+    float condition = pow(b, 2) - 4 * a * c;
+    if (condition >= 0) {
+        float r1 = (-sqrtf(condition) - b)/(2 * a);
+        float r2 = (sqrtf(condition) - b)/(2 * a);
+        return @[@(r1),@(r2)];
+    }
+    return nil;
+    
+}
+
+// 计算两个点的距离
+- (float)distanceWithPoint:(CGPoint)point point1:(CGPoint)point1 {
+    return  sqrt(pow(point.x - point1.x, 2) + pow(point.y - point1.y, 2));
+}
+
+// 判断两个点是否接近,参考值为线宽
 - (BOOL)isNearbyTargetPoint:(CGPoint)targetPoint x:(float)x y:(float)y{
-	return fabs(x - targetPoint.x) < 3 && fabs(y - targetPoint.y) < 3;
+    return fabs(x - targetPoint.x) <= ceil(_lineWidth) && fabs(y - targetPoint.y) <= ceil(_lineWidth) ;
+}
+#pragma mark - 贝塞尔曲线的相关计算公式
+#pragma mark ---计算点的速度
+- (CGFloat)speedAtT:(CGFloat)t {
+    CGFloat xSpeed = [self xSpeedAtT:t];
+    CGFloat ySpeed = [self ySpeedAtT:t];
+    CGFloat speed = sqrt(pow(xSpeed, 2) + pow(ySpeed, 2));
+    return speed;
 }
 
-- (void)calTWithCondition:(float)condition
-				 resultT1:(float *)t1 resultT2:(float *)t2{
-	*t1 = (-sqrtf(condition) - _quadraticEquationB)/(2 * _quadraticEquationA);
-	*t2 = (sqrtf(condition) - _quadraticEquationB)/(2 * _quadraticEquationA);
+- (CGFloat)xSpeedAtT:(CGFloat)t {
+    return 2 * (_startPoint.x + _endPoint.x - 2 * _controlPoint.x) * t + 2 * (_controlPoint.x - _startPoint.x);;
 }
 
-- (float)betterTWithT1:(float)t1 t2:(float)t2
-			   targetX:(float)x{
-	float x1 = powf((1 - t1), 2) * _startPoint.x + 2 * t1 * (1 - t1) * _controlPoint.x + pow(t1, 2) * _endPoint.x;
-	
-	float x2 = powf((1 - t2), 2) * _startPoint.x + 2 * t2 * (1 - t2) * _controlPoint.x + pow(t2, 2) * _endPoint.x;
-	//            NSLog(@"x:%f t1:%f t2:%f",x,t1,t2);
-	if (fabs(x1 - x) < fabs(x2 - x)) {
-		return t1;
-	} else {
-		return t2;
-	}
+- (CGFloat)ySpeedAtT:(CGFloat)t {
+    return 2 * (_startPoint.y + _endPoint.y - 2 * _controlPoint.y) * t + 2 * (_controlPoint.y - _startPoint.y);
 }
-#pragma mark ---一元一次方程
-- (float)linearEquationWith:(float)y {
-	float t = (-_startPoint.y - y)/_quadraticEquationB;
-	if (t >= 0 && t <= 10) {
-		return t;
-	}
-	return -1;
+
+#pragma mark ---根据T计算点的位置
+- (CGFloat)xAtT:(CGFloat)t {
+    CGFloat x = pow((1-t), 2) * _startPoint.x + 2 * (1-t)* t * _controlPoint.x + pow(t, 2) * _endPoint.x;
+    return x;
+}
+
+- (CGFloat)yAtT:(CGFloat)t {
+    CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + pow(t, 2) * _endPoint.y;
+    return y;
+}
+#pragma mark ---计算顶点相关
+- (CGPoint)yVertexPoint {
+    CGFloat t = [self tForYAtVertexPoint];
+    if (t >= 0 && t <= 1) {
+        CGFloat x = [self xAtT:t];
+        CGFloat y = [self yAtT:t];
+        
+        return CGPointMake(x, y);
+    }
+    return CGPointZero;
+}
+
+- (CGPoint)XVertexPoint {
+    CGFloat t = [self tForXAtVertexPoint];
+    if (t >= 0 && t <= 1) {
+        CGFloat x = [self xAtT:t];
+        CGFloat y = [self yAtT:t];
+        return CGPointMake(x, y);
+    }
+    return CGPointZero;
+}
+
+- (CGFloat)tForYAtVertexPoint {
+    CGFloat t = (_startPoint.y - _controlPoint.y)/(_startPoint.y + _endPoint.y - 2 * _controlPoint.y);
+    return t;
+}
+- (CGFloat)tForXAtVertexPoint {
+    CGFloat t = (_startPoint.x - _controlPoint.x)/(_startPoint.x + _endPoint.x - 2 * _controlPoint.x);
+    return t;
+}
+#pragma mark ---曲线长度
+- (CGFloat)lengthWithT:(CGFloat)t{
+    NSInteger totalStep = 1000;
+    
+    NSInteger stepCounts = (NSInteger)(totalStep * t);
+    
+    if(stepCounts & 1) stepCounts++;
+    
+    if(stepCounts==0) return 0.0;
+    
+    NSInteger halfCounts = stepCounts/2;
+    CGFloat sum1=0.0, sum2=0.0;
+    CGFloat dStep = (t * 1.0)/stepCounts;
+    for(NSInteger i=0; i<halfCounts; i++) {
+        sum1 += [self speedAtT:(2*i+1)*dStep];
+    }
+    
+    for(NSInteger i=1; i<halfCounts; i++) {
+        sum2 += [self speedAtT:(2*i)*dStep ];
+    }
+    
+    return ([self speedAtT:0]+[self speedAtT:1]+2*sum2+4*sum1)*dStep/3.0;
+}
+#pragma mark ---矫正间隔
+- (CGFloat)uniformSpeedAtT:(CGFloat)t count:(NSInteger)count{
+    
+    CGFloat len = t * count; //如果按照匀速增长,此时对应的曲线长度
+    CGFloat t1=t, t2;
+    do {
+        t2 = t1 -([self lengthWithT:t1] - len)/[self speedAtT:t1];
+        if(fabs(t1-t2)<0.001) break;
+        t1=t2;
+    }while(true);
+    
+    return t2;
 }
 @end

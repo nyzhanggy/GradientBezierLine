@@ -37,7 +37,7 @@
 	
 	
 	
-	UIImage *image = [[[GradientLine alloc] init] gradientLineWithStartPoint:_startPoint controlPoint:_controlPoint endPoint:_endPoint startColor:[UIColor redColor] endColor:[UIColor yellowColor]];
+	UIImage *image = [[[GradientLine alloc] init] gradientLineWithStartPoint:_startPoint controlPoint:_controlPoint endPoint:_endPoint startColor:[UIColor redColor] endColor:[UIColor yellowColor] size:CGSizeMake(150, 300)];
 	
 	UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(150, 20, image.size.width, image.size.height)];
 	imageView.image = image;
