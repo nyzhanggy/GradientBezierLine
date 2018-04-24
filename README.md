@@ -265,10 +265,3 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
 可以先看下效果。整体来说效果还是理想的，并且也支持了线宽的问题。
 
 ![渐变曲线](http://upload-images.jianshu.io/upload_images/1681985-a936b1c1775106e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/520)
-
-
-如果需要多段贝塞尔曲线，则可以分段来画，然后将每段的结果进行合成即可。在分段的时候需要计算到每段曲线的长度
-
-```
-- (CGFloat)lengthWithT:(CGFloat)t;
-```
