@@ -139,15 +139,15 @@ void ProviderReleaseData (void *info, const void *data, size_t size)
 #pragma mark - 解方程
 #pragma mark ---一元二次方程
 - (float)quadraticEquationWithPoint:(CGPoint)point  {
-    float t = [self baseOnXWithPoint:point];
-    // 如果没有结果 即 t = -1，则依据Y从新计算
-    // 如果计算的结果为 X 方向上的顶点，由于顶点位置计算不准确，所以根据Y从新计算
-    if (t == -1 || fabs([self tForXAtVertexPoint] - t) < 0.1) {
-        float otherT = [self baseOnYWithPoint:point];
-        if (otherT == -1) {
-            return t;
-        }
-        t = otherT;
+    // 两个方向上都算一下，取一下最优的
+    float baseOnXT = [self baseOnXWithPoint:point];
+    float baseOnYT = [self baseOnYWithPoint:point];
+    float t = [self betterRWithRs:@[@(baseOnXT),@(baseOnYT)] targetPoint:point];
+    if (t == -1) {
+        // 如果不在线上，可以认为是顶点位置。从两个方向上的顶点位置取一个最优的。
+        float xVertex = [self tForYAtVertexPoint];
+        float yVertex = [self tForYAtVertexPoint];
+        t = [self betterRWithRs:@[@(xVertex),@(yVertex)] targetPoint:point];
     }
     return t;
 }
@@ -198,9 +198,12 @@ void ProviderReleaseData (void *info, const void *data, size_t size)
 // 筛选结果
 - (float)betterRWithRs:(NSArray *)rs targetPoint:(CGPoint)point{
     CGFloat distance = NSNotFound;
-    NSInteger betterIndex = 0;
+    NSInteger betterIndex = -1;
     for (NSInteger i = 0; i < rs.count; i ++) {
         float t = [[rs objectAtIndex:i] floatValue];
+        if (t == -1) {
+            continue;
+        }
         CGFloat x = [self xAtT:t];
         CGFloat y = [self yAtT:t];
         if (distance == NSNotFound) {
@@ -214,6 +217,9 @@ void ProviderReleaseData (void *info, const void *data, size_t size)
             }
         }
         
+    }
+    if (betterIndex == -1) {
+        return -1;
     }
     float t = [rs[betterIndex] floatValue];
     if (t >= 1) {
@@ -335,17 +341,6 @@ void ProviderReleaseData (void *info, const void *data, size_t size)
     
     return ([self speedAtT:0]+[self speedAtT:1]+2*sum2+4*sum1)*dStep/3.0;
 }
-#pragma mark ---矫正间隔
-- (CGFloat)uniformSpeedAtT:(CGFloat)t count:(NSInteger)count{
-    
-    CGFloat len = t * count; //如果按照匀速增长,此时对应的曲线长度
-    CGFloat t1=t, t2;
-    do {
-        t2 = t1 -([self lengthWithT:t1] - len)/[self speedAtT:t1];
-        if(fabs(t1-t2)<0.001) break;
-        t1=t2;
-    }while(true);
-    
-    return t2;
-}
+
 @end
+

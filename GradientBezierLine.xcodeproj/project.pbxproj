@@ -14,8 +14,6 @@
 		1554D0091E10CE8D000FC274 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1554D0071E10CE8D000FC274 /* Main.storyboard */; };
 		1554D00B1E10CE8D000FC274 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1554D00A1E10CE8D000FC274 /* Assets.xcassets */; };
 		1554D00E1E10CE8D000FC274 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1554D00C1E10CE8D000FC274 /* LaunchScreen.storyboard */; };
-		1554D0191E10CEEA000FC274 /* BezierPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1554D0161E10CEEA000FC274 /* BezierPath.m */; };
-		1554D01A1E10CEEA000FC274 /* GradientBezierLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1554D0181E10CEEA000FC274 /* GradientBezierLine.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,10 +29,6 @@
 		1554D00A1E10CE8D000FC274 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1554D00D1E10CE8D000FC274 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1554D00F1E10CE8D000FC274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1554D0151E10CEEA000FC274 /* BezierPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BezierPath.h; sourceTree = "<group>"; };
-		1554D0161E10CEEA000FC274 /* BezierPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BezierPath.m; sourceTree = "<group>"; };
-		1554D0171E10CEEA000FC274 /* GradientBezierLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientBezierLine.h; sourceTree = "<group>"; };
-		1554D0181E10CEEA000FC274 /* GradientBezierLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradientBezierLine.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,10 +75,6 @@
 				1554D0021E10CE8D000FC274 /* AppDelegate.m */,
 				1554D0041E10CE8D000FC274 /* ViewController.h */,
 				1554D0051E10CE8D000FC274 /* ViewController.m */,
-				1554D0151E10CEEA000FC274 /* BezierPath.h */,
-				1554D0161E10CEEA000FC274 /* BezierPath.m */,
-				1554D0171E10CEEA000FC274 /* GradientBezierLine.h */,
-				1554D0181E10CEEA000FC274 /* GradientBezierLine.m */,
 				1554D0071E10CE8D000FC274 /* Main.storyboard */,
 				1554D00A1E10CE8D000FC274 /* Assets.xcassets */,
 				1554D00C1E10CE8D000FC274 /* LaunchScreen.storyboard */,
@@ -174,11 +164,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1554D0061E10CE8D000FC274 /* ViewController.m in Sources */,
-				1554D0191E10CEEA000FC274 /* BezierPath.m in Sources */,
 				1554D0031E10CE8D000FC274 /* AppDelegate.m in Sources */,
 				154EFE7B1E76A68D00405ECF /* GradientLine.m in Sources */,
 				1554D0001E10CE8D000FC274 /* main.m in Sources */,
-				1554D01A1E10CEEA000FC274 /* GradientBezierLine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
