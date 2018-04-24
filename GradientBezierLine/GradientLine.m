@@ -21,13 +21,16 @@
 @end
 
 @implementation GradientLine
-- (UIImage*)gradientLineWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint
-                            startColor:(UIColor *)startColor endColor:(UIColor *)endColor
-                                  size:(CGSize)size {
-    
-    _startPoint = startPoint;
-    _controlPoint = controlPoint;
-    _endPoint = endPoint;
+- (instancetype)initWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint {
+    if (self = [super init]) {
+        _startPoint = startPoint;
+        _controlPoint = controlPoint;
+        _endPoint = endPoint;
+    }
+    return self;
+}
+- (UIImage*)gradientLineWithStartColor:(UIColor *)startColor endColor:(UIColor *)endColor size:(CGSize)size {
+
     _lineWidth = 5;
     
     CGFloat startR;
@@ -43,7 +46,7 @@
     [endColor getRed:&endR green:&endG blue:&endB alpha:&endA];
     
     
-    CAShapeLayer *layer = [self lineLayerWithStartPoint:startPoint controlPoint:controlPoint endPoint:endPoint size:size];
+    CAShapeLayer *layer = [self lineLayerWithStartPoint:_startPoint controlPoint:_controlPoint endPoint:_endPoint size:size];
     
     float scale = [UIScreen mainScreen].scale;
     // 分配内存
@@ -319,7 +322,7 @@ void ProviderReleaseData (void *info, const void *data, size_t size)
     return t;
 }
 #pragma mark ---曲线长度
-- (CGFloat)lengthWithT:(CGFloat)t{
+- (CGFloat)lengthWithT:(CGFloat)t {
     NSInteger totalStep = 1000;
     
     NSInteger stepCounts = (NSInteger)(totalStep * t);

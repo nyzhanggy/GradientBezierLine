@@ -6,7 +6,7 @@
 #import <UIKit/UIKit.h>
 
 @interface GradientLine : NSObject
-- (UIImage*)gradientLineWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint
-                            startColor:(UIColor *)startColor endColor:(UIColor *)endColor
-                                  size:(CGSize)size;
+- (instancetype)initWithStartPoint:(CGPoint)startPoint controlPoint:(CGPoint)controlPoint endPoint:(CGPoint)endPoint;
+- (UIImage*)gradientLineWithStartColor:(UIColor *)startColor endColor:(UIColor *)endColor size:(CGSize)size;
+- (CGFloat)lengthWithT:(CGFloat)t;
 @end

@@ -108,7 +108,7 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
 //矫正间隔
 - (CGFloat)uniformSpeedAtT:(CGFloat)t {
     CGFloat totalLength = [self lengthWithT:1.0];
-    CGFloat len = t*totalLength; 
+    CGFloat len = t*totalLength;
     CGFloat t1=t, t2;
     do {
         t2 = t1 -([self lengthWithT:t1] - len)/[self speedAtT:t1];
@@ -193,25 +193,26 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
         float t = (-c)/b;
         return t;
     }
-    
+
     return -1;
 }
 ```
 
-这里会有两个方程，一个是以x为参数，一个以y为参数。这两个方程都会用到。为什么要用两个方程？因为有的点通过x或者y 并不能解得结果，比如说顶点附近的点，通过点做 x 轴的 垂线，可能与曲线并不会交点，也就意味着不会有解。所以如果以x为参数无解，那就再用y为参数的方程解一次，如果还没有解，那这个点就认为是不在线上的了。
+这里会有两个方程，一个是以x为参数，一个以y为参数。这两个方程都会用到。为什么要用两个方程？因为有的点通过x或者y 并不能解得结果，比如说顶点附近的点，通过点做 x 轴的 垂线，可能与曲线并不会交点，也就意味着不会有解。在这里为了准确度，在x方向和y方向都做了计算，然后取最优的点。
 
-在计算的过程中还有一个问题：如果以x 为参数计算，那么 X 方向上顶点附近的点（如果有顶点）计算出来的t值误差会比较大。所以在计算的时候做了一些判断，如果是顶点附近的点，以y为参数计算
+当曲线的顶点比较陡的话，可能通过上面的计算并不会有解。那么这种情况就认为这个点就是顶点附近的点，然后计算出x方面和y方向的顶点值，取最优解。
+
 ```
 - (float)quadraticEquationWithPoint:(CGPoint)point  {
-    float t = [self baseOnXWithPoint:point];
-    // 如果没有结果 即 t = -1，则依据Y从新计算
-    // 如果计算的结果为 X 方向上的顶点，由于顶点位置计算不准确，所以根据Y从新计算
-    if (t == -1 || fabs([self tForXAtVertexPoint] - t) < 0.1) {
-        float otherT = [self baseOnYWithPoint:point];
-        if (otherT == -1) {
-            return t;
-        }
-        t = otherT;
+    // 两个方向上都算一下，取一下最优的
+    float baseOnXT = [self baseOnXWithPoint:point];
+    float baseOnYT = [self baseOnYWithPoint:point];
+    float t = [self betterRWithRs:@[@(baseOnXT),@(baseOnYT)] targetPoint:point];
+    if (t == -1) {
+        // 如果不在线上，可以认为是顶点位置。从两个方向上的顶点位置取一个最优的。
+        float xVertex = [self tForYAtVertexPoint];
+        float yVertex = [self tForYAtVertexPoint];
+        t = [self betterRWithRs:@[@(xVertex),@(yVertex)] targetPoint:point];
     }
     return t;
 }
@@ -239,7 +240,7 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
                 betterIndex = i;
             }
         }
-        
+
     }
     float t = [rs[betterIndex] floatValue];
     if (t >= 1) {
@@ -249,7 +250,7 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
             return -1;
         }
     }
-    
+
     if (t <= 0) {
         if ([self isNearbyTargetPoint:_startPoint x:point.x y:point.y]) {
             return 0;
@@ -266,3 +267,8 @@ CGFloat y = pow((1-t), 2) * _startPoint.y + 2 * (1-t) * t * _controlPoint.y + po
 ![渐变曲线](http://upload-images.jianshu.io/upload_images/1681985-a936b1c1775106e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/520)
 
 
+如果需要多段贝塞尔曲线，则可以分段来画，然后将每段的结果进行合成即可。在分段的时候需要计算到每段曲线的长度
+
+```
+- (CGFloat)lengthWithT:(CGFloat)t;
+```
