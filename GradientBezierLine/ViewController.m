@@ -13,9 +13,10 @@
     BOOL _shouldAddPointView;
 }
 @property (nonatomic, strong) UIImageView *imageView ;
-@property (nonatomic, strong) UILabel *desLabel;
+
 @property (nonatomic, strong) UIButton *clearButton;
 @property (nonatomic, strong) NSMutableArray *pointViewArray;
+@property (weak, nonatomic) IBOutlet UILabel *desLabel;
 
 @end
 
@@ -77,17 +78,7 @@
     [self.pointViewArray addObject:pointView];
 }
 #pragma mark - setter && getter
-- (UILabel *)desLabel {
-    if (!_desLabel) {
-        _desLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.frame), 40)];
-        _desLabel.textColor = [UIColor lightGrayColor];
-        _desLabel.textAlignment = NSTextAlignmentCenter;
-        _desLabel.font = [UIFont systemFontOfSize:12];
-        _desLabel.numberOfLines = 2;
-        _desLabel.text = @"连选三个点生成贝塞尔曲线";
-    }
-    return _desLabel;
-}
+
 - (UIButton *)clearButton {
     if (!_clearButton) {
         _clearButton = [UIButton buttonWithType:UIButtonTypeSystem];

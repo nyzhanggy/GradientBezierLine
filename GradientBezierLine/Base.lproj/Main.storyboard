@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="yfd-ud-aih">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="yfd-ud-aih">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,15 +20,31 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="连选三个点生成贝塞尔曲线" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dN4-xP-in9">
+                                <rect key="frame" x="20" y="84" width="335" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="dN4-xP-in9" secondAttribute="trailing" constant="20" id="A8M-8l-P7W"/>
+                            <constraint firstItem="dN4-xP-in9" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="YCh-Wu-oAG"/>
+                            <constraint firstItem="dN4-xP-in9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="zIZ-0M-8YU"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="一段曲线" id="HOt-5J-nYj">
-                        <barButtonItem key="rightBarButtonItem" title="next" id="oOy-DG-BR5">
+                        <barButtonItem key="rightBarButtonItem" title="多端曲线" id="oOy-DG-BR5">
                             <connections>
                                 <segue destination="Y90-eX-Meg" kind="show" id="q8M-Cj-DRy"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="desLabel" destination="dN4-xP-in9" id="mSW-Kv-acm"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -45,9 +61,25 @@
                     <view key="view" contentMode="scaleToFill" id="jDW-6U-f8I">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="选择起始点" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lWU-r1-P0l">
+                                <rect key="frame" x="20" y="84" width="335" height="16"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="lWU-r1-P0l" firstAttribute="leading" secondItem="jDW-6U-f8I" secondAttribute="leading" constant="20" id="RRU-JK-dUa"/>
+                            <constraint firstItem="lWU-r1-P0l" firstAttribute="top" secondItem="NXX-88-zJD" secondAttribute="bottom" constant="20" id="nhd-RO-D9U"/>
+                            <constraint firstAttribute="trailing" secondItem="lWU-r1-P0l" secondAttribute="trailing" constant="20" id="rpF-Dj-nSA"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="多段曲线" id="VzZ-zH-mG2"/>
+                    <connections>
+                        <outlet property="desLabel" destination="lWU-r1-P0l" id="Z0K-zR-nKr"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="34z-lP-cKa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
