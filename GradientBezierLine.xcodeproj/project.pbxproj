@@ -15,6 +15,7 @@
 		1554D00B1E10CE8D000FC274 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1554D00A1E10CE8D000FC274 /* Assets.xcassets */; };
 		1554D00E1E10CE8D000FC274 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1554D00C1E10CE8D000FC274 /* LaunchScreen.storyboard */; };
 		15BFAA23208F24FB00664992 /* NextVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BFAA22208F24FB00664992 /* NextVC.m */; };
+		15C35EAC21C9E520006B1CA3 /* GradientRingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C35EAA21C9E51F006B1CA3 /* GradientRingView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		1554D00F1E10CE8D000FC274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15BFAA21208F24FB00664992 /* NextVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NextVC.h; sourceTree = "<group>"; };
 		15BFAA22208F24FB00664992 /* NextVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NextVC.m; sourceTree = "<group>"; };
+		15C35EAA21C9E51F006B1CA3 /* GradientRingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradientRingView.m; sourceTree = "<group>"; };
+		15C35EAB21C9E520006B1CA3 /* GradientRingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientRingView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 				1554D0051E10CE8D000FC274 /* ViewController.m */,
 				15BFAA21208F24FB00664992 /* NextVC.h */,
 				15BFAA22208F24FB00664992 /* NextVC.m */,
+				15C35EAB21C9E520006B1CA3 /* GradientRingView.h */,
+				15C35EAA21C9E51F006B1CA3 /* GradientRingView.m */,
 				1554D0071E10CE8D000FC274 /* Main.storyboard */,
 				1554D00A1E10CE8D000FC274 /* Assets.xcassets */,
 				1554D00C1E10CE8D000FC274 /* LaunchScreen.storyboard */,
@@ -172,6 +177,7 @@
 				1554D0031E10CE8D000FC274 /* AppDelegate.m in Sources */,
 				154EFE7B1E76A68D00405ECF /* GradientLine.m in Sources */,
 				15BFAA23208F24FB00664992 /* NextVC.m in Sources */,
+				15C35EAC21C9E520006B1CA3 /* GradientRingView.m in Sources */,
 				1554D0001E10CE8D000FC274 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

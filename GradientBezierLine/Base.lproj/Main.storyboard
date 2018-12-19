@@ -9,6 +9,43 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--圆环-->
+        <scene sceneID="RzW-I4-AxD">
+            <objects>
+                <viewController id="nDs-D2-U5g" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wGc-KP-U40"/>
+                        <viewControllerLayoutGuide type="bottom" id="LqU-Pu-gfx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="K2n-Os-X6z">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v1a-qb-bvY" customClass="GradientRingView">
+                                <rect key="frame" x="87.5" y="233.5" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="7zP-NF-vid"/>
+                                    <constraint firstAttribute="height" constant="200" id="vE0-Ke-Ib3"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="v1a-qb-bvY" firstAttribute="centerX" secondItem="K2n-Os-X6z" secondAttribute="centerX" id="F1i-IY-HTm"/>
+                            <constraint firstItem="v1a-qb-bvY" firstAttribute="centerY" secondItem="K2n-Os-X6z" secondAttribute="centerY" id="qD2-AG-z0l"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="圆环" id="1fs-HV-aW8"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oas-IT-fHu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="534" y="-500"/>
+        </scene>
         <!--一段曲线-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -36,7 +73,12 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="一段曲线" id="HOt-5J-nYj">
-                        <barButtonItem key="rightBarButtonItem" title="多端曲线" id="oOy-DG-BR5">
+                        <barButtonItem key="leftBarButtonItem" title="圆环" id="ZXe-Yr-Hkf">
+                            <connections>
+                                <segue destination="nDs-D2-U5g" kind="show" id="h9J-M0-YLO"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="多段曲线" id="oOy-DG-BR5">
                             <connections>
                                 <segue destination="Y90-eX-Meg" kind="show" id="q8M-Cj-DRy"/>
                             </connections>
